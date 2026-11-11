@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="hu" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Munkanélküliek - Klub Portál</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0b1329',
+                        darkCard: '#131f3f',
+                        goldPrimary: '#d4af37',
+                        goldHover: '#e5c158',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-darkBg text-white font-sans min-h-screen flex flex-col selection:bg-goldPrimary selection:text-black">
+
+    <!-- FELSŐ SÁV (HEADER) -->
+    <header class="bg-[#0f172a] border-b border-goldPrimary/20 px-6 py-3 flex flex-wrap items-center justify-between shadow-lg">
+        <!-- Bal oldal: Kis logó + Cím + Szlogen -->
+        <div class="flex items-center space-x-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-goldPrimary to-yellow-600 rounded-full flex items-center justify-center p-0.5 shadow-md border border-yellow-200">
+                <div class="w-full h-full bg-[#111] rounded-full flex items-center justify-center">
+                    <i class="fa-solid fa-futbol text-goldPrimary text-xl"></i>
+                </div>
+            </div>
+            <div>
+                <h1 class="text-2xl font-black tracking-wider text-white">Munkanélküliek</h1>
+                <p class="text-xs text-goldPrimary italic font-medium">„Munka nélkül, de győzelemre éhesen!”</p>
+            </div>
+        </div>
+
+        <!-- Jobb oldal: Felhasználói sáv & Admin Gomb -->
+        <div class="flex items-center space-x-6 text-sm mt-2 sm:mt-0">
+            <button onclick="openAdminModal()" class="flex items-center space-x-2 bg-gradient-to-r from-goldPrimary to-yellow-600 text-black px-4 py-2 rounded-lg font-bold shadow hover:from-goldHover hover:to-goldPrimary transition">
+                <i class="fa-solid fa-crown"></i>
+                <span>Tulajdonosi felület</span>
+            </button>
+            <div class="hidden md:flex items-center space-x-2 text-gray-300">
+                <i class="fa-solid fa-user text-goldPrimary"></i>
+                <span>Bejelentkezve: <strong class="text-white">Klubtulajdonos</strong></span>
+            </div>
+            <button onclick="alert('Kijelentkezve!')" class="flex items-center space-x-1 text-gray-400 hover:text-red-400 transition">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span class="hidden sm:inline">Kijelentkezés</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="flex flex-1 overflow-hidden">
+        
+        <!-- BAL OLDALI MENÜ -->
+        <aside class="w-64 bg-[#0d152a] border-r border-goldPrimary/20 p-4 flex flex-col justify-between hidden md:flex shrink-0">
+            <nav class="space-y-1">
+                <button onclick="switchTab('fooldal')" id="nav-fooldal" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg font-semibold bg-goldPrimary text-black shadow-lg transition">
+                    <i class="fa-solid fa-house w-5 text-center"></i>
+                    <span>Főoldal</span>
+                </button>
+                <button onclick="switchTab('csapatok')" id="nav-csapatok" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg font-medium text-gray-300 hover:bg-white/5 hover:text-white transition">
+                    <i class="fa-solid fa-shield-halved w-5 text-center"></i>
+                    <span>Csapatok</span>
+                </button>
+                <button onclick="switchTab('merkozesek')" id="nav-merkozesek" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg font-medium text-gray-300 hover:bg-white/5 hover:text-white transition">
+                    <i class="fa-solid fa-calendar-days w-5 text-center"></i>
+                    <span>Mérkőzések</span>
+                </button>
+                <button onclick="switchTab('statisztikak')" id="nav-statisztikak" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg font-medium text-gray-300 hover:bg-white/5 hover:text-white transition">
+                    <i class="fa-solid fa-chart-column w-5 text-center"></i>
+                    <span>Statisztikák</span>
+                </button>
+                <button onclick="switchTab('csapatiranyitas')" id="nav-csapatiranyitas" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg font-medium text-gray-300 hover:bg-white/5 hover:text-white transition">
+                    <i class="fa-solid fa-users-gear w-5 text-center"></i>
+                    <span>Csapatirányítás</span>
+                </button>
+                <button onclick="switchTab('atigazolasok')" id="nav-atigazolasok" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg font-medium text-gray-300 hover:bg-white/5 hover:text-white transition">
+                    <i class="fa-solid fa-right-left w-5 text-center"></i>
+                    <span>Átigazolások</span>
+                </button>
+                <button onclick="switchTab('beallitasok')" id="nav-beallitasok" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg font-medium text-gray-300 hover:bg-white/5 hover:text-white transition">
+                    <i class="fa-solid fa-gear w-5 text-center"></i>
+                    <span>Beállítások</span>
+                </button>
+            </nav>
+
+            <!-- Bal alsó mottó / Kép -->
+            <div class="mt-8 relative rounded-xl overflow-hidden border border-goldPrimary/30 bg-black/40 p-4 text-center">
+                <div class="absolute inset-0 bg-cover bg-center opacity-20" style="background-image: url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&q=80&w=400');"></div>
+                <div class="relative z-10">
+                    <p class="text-sm font-bold text-goldPrimary italic">Munkanélküliek – egy klub, két sportág, egy család!</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- FŐ TARTALMI RÉSZ -->
+        <main class="flex-1 overflow-y-auto p-6 lg:p-8 space-y-6">
+
+            <!-- FŐOLDAL TAB -->
+            <div id="tab-fooldal" class="tab-content space-y-6">
+                <!-- FELSŐ KÉT KÁRTYA (Klubinfó & Következő mérkőzés) -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Klubinformáció -->
+                    <div class="bg-darkCard border border-goldPrimary/20 rounded-xl p-6 shadow-xl relative overflow-hidden">
+                        <div class="flex justify-between items-start mb-4">
+                            <h2 class="text-xl font-bold text-goldPrimary flex items-center space-x-2">
+                                <i class="fa-solid fa-circle-info"></i>
+                                <span>Klubinformáció</span>
+                            </h2>
+                        </div>
+                        <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6">
+                            <!-- Nagy Klub Címer -->
+                            <div class="w-28 h-28 bg-gradient-to-b from-yellow-500 via-goldPrimary to-yellow-700 p-1 rounded-2xl shadow-xl flex items-center justify-center shrink-0">
+                                <div class="w-full h-full bg-[#111827] rounded-xl flex flex-col items-center justify-center p-2 text-center border border-goldPrimary/40">
+                                    <i class="fa-solid fa-futbol text-goldPrimary text-3xl mb-1"></i>
+                                    <span class="text-[9px] font-black uppercase tracking-tighter text-white">Munkanélküliek</span>
+                                    <span class="text-[8px] text-goldPrimary">2024</span>
+                                </div>
+                            </div>
+                            <!-- Adatok -->
+                            <div class="flex-1 space-y-2 text-sm">
+                                <div class="flex justify-between border-b border-white/10 pb-1">
+                                    <span class="text-gray-400">Elnök:</span>
+                                    <span id="info-elnok" class="font-semibold text-white">Prém Botond</span>
+                                </div>
+                                <div class="flex justify-between border-b border-white/10 pb-1">
+                                    <span class="text-gray-400">Alelnök:</span>
+                                    <span id="info-alelnok" class="font-semibold text-white">Hordos Bulcsu</span>
+                                </div>
+                                <div class="flex justify-between border-b border-white/10 pb-1 pt-2">
+                                    <span class="text-gray-400">Klub székhelye:</span>
+                                    <span id="info-szekhely" class="font-semibold text-white">Munkanélküliek Városa</span>
+                                </div>
+                                <div class="flex justify-between pb-1">
+                                    <span class="text-gray-400">Alapítás éve:</span>
+                                    <span id="info-alapitas" class="font-semibold text-white">2024</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Következő mérkőzés -->
+                    <div class="bg-darkCard border border-goldPrimary/20 rounded-xl p-6 shadow-xl relative overflow-hidden flex flex-col justify-between">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold text-goldPrimary flex items-center space-x-2">
+                                <i class="fa-solid fa-calendar-check"></i>
+                                <span>Következő mérkőzés</span>
+                            </h2>
+                            <button onclick="openAdminModal()" class="text-xs bg-white/10 hover:bg-goldPrimary hover:text-black px-2.5 py-1 rounded transition text-goldPrimary">
+                                <i class="fa-solid fa-pen-to-square"></i> Szerkesztés
+                            </button>
+                        </div>
+                        <div class="flex items-center justify-around my-auto py-2">
+                            <!-- Hazai Csapat -->
+                            <div class="text-center space-y-2">
+                                <div class="w-16 h-16 bg-[#111827] border border-goldPrimary rounded-xl mx-auto flex items-center justify-center shadow-lg">
+                                    <i class="fa-solid fa-futbol text-goldPrimary text-2xl"></i>
+                                </div>
+                                <span class="font-bold text-sm block">Munkanélküliek</span>
+                            </div>
+                            <!-- VS -->
+                            <div class="text-3xl font-black italic text-goldPrimary tracking-widest px-4">
+                                VS
+                            </div>
+                            <!-- Vendég Csapat -->
+                            <div class="text-center space-y-2">
+                                <div class="w-16 h-16 bg-blue-900 border border-blue-400 rounded-xl mx-auto flex items-center justify-center shadow-lg">
+                                    <i class="fa-solid fa-school text-blue-200 text-2xl"></i>
+                                </div>
+                                <span id="next-away-name" class="font-bold text-sm block max-w-[120px] truncate">Kónyi Ált. Iskolai Csornai SE</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-white/10 text-xs space-y-1 text-gray-300">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Időpont:</span>
+                                <span id="next-date" class="font-semibold text-white">2025.05.17. 16:00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Helyszín:</span>
+                                <span id="next-location" class="font-semibold text-white">Munkanélküliek Sportpálya</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ALSÓ KÉT SZEKCIÓ (Focicsapat & Kézilabda csapat) -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Focicsapat -->
+                    <div class="bg-darkCard border border-goldPrimary/20 rounded-xl p-6 shadow-xl space-y-4">
+                        <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                            <h2 class="text-lg font-bold text-goldPrimary flex items-center space-x-2">
+                                <i class="fa-solid fa-futbol"></i>
+                                <span>Focicsapat</span>
+                            </h2>
+                        </div>
+                        <!-- Csapat adatok -->
+                        <div class="grid grid-cols-2 gap-2 text-sm bg-black/20 p-3 rounded-lg border border-white/5">
+                            <div><span class="text-gray-400">Elnök:</span> <strong id="foci-elnok" class="text-white">Prém Botond</strong></div>
+                            <div><span class="text-gray-400">Alelnök:</span> <strong id="foci-alelnok" class="text-white">Hordos Bulcsu</strong></div>
+                            <div><span class="text-gray-400">Edző:</span> <strong id="foci-edzo" class="text-white">-</strong></div>
+                        </div>
+
+                        <!-- Játékoskeret -->
+                        <div>
+                            <h3 class="text-sm font-bold text-goldPrimary mb-3 uppercase tracking-wider">Játékoskeret</h3>
+                            
+                            <!-- Támadók -->
+                            <div class="mb-3">
+                                <span class="text-xs font-semibold text-gray-400 uppercase">Támadók:</span>
+                                <div id="foci-tamadok-container" class="grid grid-cols-3 gap-3 mt-2">
+                                    <!-- Dinamikusan feltöltve -->
+                                </div>
+                            </div>
+
+                            <!-- Kapus & Védő -->
+                            <div class="grid grid-cols-2 gap-4 mt-4">
+                                <div>
+                                    <span class="text-xs font-semibold text-gray-400 uppercase">Kapus:</span>
+                                    <div id="foci-kapus-container" class="mt-2">
+                                        <!-- Dinamikusan feltöltve -->
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="text-xs font-semibold text-gray-400 uppercase">Védő:</span>
+                                    <div id="foci-vedo-container" class="mt-2">
+                                        <!-- Dinamikusan feltöltve -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Kézilabda csapat -->
+                    <div class="bg-darkCard border border-goldPrimary/20 rounded-xl p-6 shadow-xl relative overflow-hidden flex flex-col justify-between">
+                        <!-- Háttér sziluett (mint a képen) -->
+                        <div class="absolute right-0 bottom-0 opacity-15 pointer-events-none w-72 h-72 bg-no-repeat bg-contain" style="background-image: url('https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&q=80&w=600');"></div>
+                        
+                        <div class="relative z-10 space-y-4">
+                            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                                <h2 class="text-lg font-bold text-goldPrimary flex items-center space-x-2">
+                                    <i class="fa-solid fa-handball"></i>
+                                    <span>Kézilabda csapat</span>
+                                </h2>
+                            </div>
+                            <!-- Csapat adatok -->
+                            <div class="space-y-2 text-sm bg-black/20 p-3 rounded-lg border border-white/5 max-w-md">
+                                <div class="flex justify-between"><span class="text-gray-400">Elnök:</span> <strong id="kezi-elnok" class="text-white">Prém Botond</strong></div>
+                                <div class="flex justify-between"><span class="text-gray-400">Alelnök:</span> <strong id="kezi-alelnok" class="text-white">Tóth Ádám</strong></div>
+                                <div class="flex justify-between"><span class="text-gray-400">Edző:</span> <strong id="kezi-edzo" class="text-white">Tóth Ádám</strong></div>
+                            </div>
+
+                            <div>
+                                <h3 class="text-sm font-bold text-goldPrimary mb-3 uppercase tracking-wider">Játékoskeret</h3>
+                                <div id="kezi-keret-container" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                    <!-- Dinamikusan feltöltve -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Alsó nagy felirat a kártyán belül -->
+                        <div class="relative z-10 mt-8 pt-4 border-t border-white/10">
+                            <h3 class="text-xl font-black italic text-goldPrimary drop-shadow-md">Munkanélküliek Kézilabda Csapat</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CSAPATOK TAB -->
+            <div id="tab-csapatok" class="tab-content hidden space-y-6">
+                <div class="bg-darkCard border border-goldPrimary/20 rounded-xl p-6 shadow-xl">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-goldPrimary flex items-center space-x-2">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            <span>Teljes Játékoskeret & Kezelés</span>
+                        </h2>
+                        <button onclick="openAdminModal()" class="bg-goldPrimary text-black px-4 py-2 rounded-lg font-bold text-sm hover:bg-goldHover transition">
+                            <i class="fa-solid fa-user-plus mr-1"></i> Új Játékos Hozzáadása
+                        </button>
+                    </div>
+                    
+                    <div id="all-players-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        <!-- Dinamikusan feltöltve az összes játékos -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- MÉRKŐZÉSEK TAB -->
+            <div id="tab-merkozesek" class="tab-content hidden space-y-6">
+                <div class="bg-darkCard border border-goldPrimary/20 rounded-xl p-6 shadow-xl">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-goldPrimary flex items-center space-x-2">
+                            <i class="fa-solid fa-calendar-days"></i>
+                            <span>Mérkőzések & Eseménynapló</span>
+                        </h2>
+                        <button onclick="openAdminModal()" class="bg-goldPrimary text-black px-4 py-2 rounded-lg font-bold text-sm hover:bg-goldHover transition">
+                            <i class="fa-solid fa-plus mr-1"></i> Meccs Szerkesztése / Hozzáadása
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-black/30 border border-goldPrimary/30 rounded-xl p-4 flex flex-col sm:flex-row justify-between items-center">
+                            <div class="flex items-center space-x-4 mb-3 sm:mb-0">
+                                <div class="bg-goldPrimary/20 text-goldPrimary p-3 rounded-lg text-xl font-bold">
+                                    <i class="fa-solid fa-futbol"></i>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-goldPrimary font-semibold">Következő Mérkőzés</div>
+                                    <div class="text-lg font-bold text-white">Munkanélküliek VS <span id="match-list-away">Kónyi Ált. Iskolai Csornai SE</span></div>
+                                    <div class="text-xs text-gray-400"><i class="fa-solid fa-clock mr-1"></i> <span id="match-list-date">2025.05.17. 16:00</span> | <i class="fa-solid fa-location-dot ml-2 mr-1"></i> <span id="match-list-loc">Munkanélküliek Sportpálya</span></div>
+                                </div>
+                            </div>
+                            <span class="bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 text-xs px-3 py-1 rounded-full font-bold">Közelgő</span>
+                        </div>
+
+                        <!-- Korábbi meccsek példa -->
+                        <div class="bg-black/20 border border-white/10 rounded-xl p-4 flex justify-between items-center opacity-75">
+                            <div>
+                                <div class="text-xs text-gray-400">2025.04.10. 15:00</div>
+                                <div class="font-bold text-white">Munkanélküliek 3 - 1 Helyi Barátok FC</div>
+                            </div>
+                            <span class="bg-green-500/20 text-green-300 border border-green-500/30 text-xs px-3 py-1 rounded-full font-bold">Győzelem</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STATISZTIKÁK TAB -->
+            <div id="tab-statisztikak" class="tab-content hidden space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-darkCard border border-goldPrimary/20 rounded-xl p-6 text-center space-y-2">
+                        <div class="text-goldPrimary text-3xl font-black">12</div>
+                        <div class="text-sm text-gray-400 uppercase tracking-wider font-semibold">Lejátszott Mérkőzés</div>
+                    </div>
+                    <div class="bg-darkCard border border-goldPrimary/20 rounded-xl p-6 text-center space-y-2">
+                        <div class="text-green-400 text-3xl font-black">9</div>
+                        <div class="text-sm text-gray-400 uppercase tracking-wider font-semibold">Győzelem</div>
+                    </div>
+                    <div class="bg-darkCard border border-goldPrimary/20 rounded-xl p-6 text-center space-y-2">
+                        <div class="text-yellow-400 text-3xl font-black">34</div>
+                        <div class="text-sm text-gray-400 uppercase tracking-wider font-semibold">Rúgott Gól</div>
+                    </div>
+                </div>
+
+                <div class="bg-darkCard border border-goldPrimary/20 rounded-xl p-6 shadow-xl">
+                    <h2 class="text-xl font-bold text-goldPrimary mb-4">Házi Góllövőlista</h2>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center bg-black/20 p-3 rounded-lg border border-white/5">
+                            <span class="font-semibold text-white">1. Prém Botond</span>
+                            <span class="bg-goldPrimary text-black px-3 py-1 rounded font-bold text-sm">14 gól</span>
+                        </div>
+                        <div class="flex justify-between items-center bg-black/20 p-3 rounded-lg border border-white/5">
+                            <span class="font-semibold text-white">2. Tóth Ádám</span>
+                            <span class="bg-goldPrimary text-black px-3 py-1 rounded font-bold text-sm">9 gól</span>
+                        </div>
+                        <div class="flex justify-between items-center bg-black/20 p-3 rounded-lg border border-white/5">
+                            <span class="font-semibold text-white">3. Kluiber Csongor</span>
+                            <span class="bg-goldPrimary text-black px-3 py-1 rounded font-bold text-sm">7 gól</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CSAPATIRÁNYÍTÁS TAB -->
+            <div id="tab-csapatiranyitas" class="tab-content hidden space-y-6">
+                <div class="bg-darkCard border border-goldPrimary/20 rounded-xl p-6 shadow-xl space-y-4">
+                    <h2 class="text-xl font-bold text-goldPrimary">Csapatirányítás & Vezetőség</h2>
+                    <p class="text-sm text-gray-300">Itt tudod módosítani a klub vezetőinek adatait, edzőket és taktikai beállításokat.</p>
+                    <button onclick="openAdminModal()" class="bg-goldPrimary text-black px-4 py-2 rounded-lg font-bold text-sm hover:bg-goldHover transition">
+                        Vezetőség Szerkesztése
+                    </button>
+                </div>
+            </div>
+
+            <!-- ÁTIGAZOLÁSOK TAB -->
+            <div id="tab-atigazolasok" class="tab-content hidden space-y-6">
+                <div class="bg-darkCard border border-goldPrimary/20 rounded-xl p-6 shadow-xl space-y-4">
+                    <h2 class="text-xl font-bold text-goldPrimary">Átigazolási Piac</h2>
+                    <p class="text-sm text-gray-300">Nincsenek aktív átigazolási hírek. Új játékos szerződtetéséhez használd a Tulajdonosi felületet.</p>
+                </div>
+            </div>
+
+            <!-- BEÁLLÍTÁSOK TAB -->
+            <div id="tab-beallitasok" class="tab-content hidden space-y-6">
+                <div class="bg-darkCard border border-goldPrimary/20 rounded-xl p-6 shadow-xl space-y-4">
+                    <h2 class="text-xl font-bold text-goldPrimary">Klub Beállítások & Adatkezelés</h2>
+                    <p class="text-sm text-gray-300">Ha szeretnéd visszaállítani az eredeti alapértelmezett adatokat, kattints az alábbi gombra:</p>
+                    <button onclick="resetData()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold text-sm transition">
+                        <i class="fa-solid fa-rotate-left mr-1"></i> Gyári Adatok Visszaállítása
+                    </button>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ADMIN MODAL (TELJES KÖRŰ TESTRESZABÁS) -->
+    <div id="admin-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-[#111c38] border border-goldPrimary rounded-2xl max-w-2xl w-full p-6 shadow-2xl text-white space-y-6 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-white/10 pb-4">
+                <h3 class="text-xl font-bold text-goldPrimary flex items-center space-x-2">
+                    <i class="fa-solid fa-crown"></i>
+                    <span>Klubtulajdonosi / Adminisztrációs Panel</span>
+                </h3>
+                <button onclick="closeAdminModal()" class="text-gray-400 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4 text-sm">
+                <!-- 1. Következő Meccs szerkesztése -->
+                <div class="bg-black/30 p-4 rounded-xl border border-white/10 space-y-3">
+                    <h4 class="font-bold text-goldPrimary">Következő Mérkőzés Módosítása</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Ellenfél Csapat Neve:</label>
+                            <input type="text" id="admin-away-team" class="w-full bg-[#0b1329] border border-white/25 rounded px-3 py-2 text-white" value="Kónyi Ált. Iskolai Csornai SE">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Mérkőzés Időpontja:</label>
+                            <input type="text" id="admin-match-date" class="w-full bg-[#0b1329] border border-white/25 rounded px-3 py-2 text-white" value="2025.05.17. 16:00">
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs text-gray-400 mb-1">Helyszín:</label>
+                            <input type="text" id="admin-match-loc" class="w-full bg-[#0b1329] border border-white/25 rounded px-3 py-2 text-white" value="Munkanélküliek Sportpálya">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Klub adatok szerkesztése -->
+                <div class="bg-black/30 p-4 rounded-xl border border-white/10 space-y-3">
+                    <h4 class="font-bold text-goldPrimary">Klub Adatok Módosítása</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Klub Elnök:</label>
+                            <input type="text" id="admin-club-elnok" class="w-full bg-[#0b1329] border border-white/25 rounded px-3 py-2 text-white" value="Prém Botond">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Klub Alelnök:</label>
+                            <input type="text" id="admin-club-alelnok" class="w-full bg-[#0b1329] border border-white/25 rounded px-3 py-2 text-white" value="Hordos Bulcsu">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Székhely:</label>
+                            <input type="text" id="admin-club-szekhely" class="w-full bg-[#0b1329] border border-white/25 rounded px-3 py-2 text-white" value="Munkanélküliek Városa">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Focicsapat Edzője:</label>
+                            <input type="text" id="admin-foci-edzo" class="w-full bg-[#0b1329] border border-white/25 rounded px-3 py-2 text-white" value="-">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Új játékos hozzáadása -->
+                <div class="bg-black/30 p-4 rounded-xl border border-white/10 space-y-3">
+                    <h4 class="font-bold text-goldPrimary">Új Játékos Hozzáadása</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Játékos Név:</label>
+                            <input type="text" id="new-player-name" placeholder="Pl. Kovács Péter" class="w-full bg-[#0b1329] border border-white/25 rounded px-3 py-2 text-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Sportág / Csapat:</label>
+                            <select id="new-player-sport" class="w-full bg-[#0b1329] border border-white/25 rounded px-3 py-2 text-white">
+                                <option value="foci">Focicsapat</option>
+                                <option value="kezi">Kézilabda csapat</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Poszt:</label>
+                            <select id="new-player-pos" class="w-full bg-[#0b1329] border border-white/25 rounded px-3 py-2 text-white">
+                                <option value="Támadó">Támadó</option>
+                                <option value="Védő">Védő</option>
+                                <option value="Kapus">Kapus</option>
+                                <option value="Mezőnyjátékos">Mezőnyjátékos (Kézilabda)</option>
+                            </select>
+                        </div>
+                        <div class="sm:col-span-3">
+                            <label class="block text-xs text-gray-400 mb-1">Portré Kép URL (vagy hagyd üresen az alapértelmezetthez):</label>
+                            <input type="text" id="new-player-img" placeholder="https://..." class="w-full bg-[#0b1329] border border-white/25 rounded px-3 py-2 text-white">
+                        </div>
+                    </div>
+                    <button onclick="addNewPlayer()" class="bg-goldPrimary/25 border border-goldPrimary text-goldPrimary hover:bg-goldPrimary hover:text-black font-bold px-4 py-2 rounded text-xs transition">
+                        <i class="fa-solid fa-plus mr-1"></i> Játékos Felvétele a Keretbe
+                    </button>
+                </div>
+            </div>
+
+            <!-- Gombok -->
+            <div class="flex justify-end space-x-3 pt-4 border-t border-white/10">
+                <button onclick="closeAdminModal()" class="px-4 py-2 rounded bg-gray-700 hover:bg-gray-600 font-semibold">Mégse</button>
+                <button onclick="saveAdminChanges()" class="px-5 py-2 rounded bg-goldPrimary text-black font-bold hover:bg-goldHover transition">Változtatások Mentése</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIKA -->
+    <script>
+        // Alapértelmezett adatok
+        const defaultData = {
+            club: {
+                elnok: "Prém Botond",
+                alelnok: "Hordos Bulcsu",
+                szekhely: "Munkanélküliek Városa",
+                alapitas: "2024",
+                fociEdzo: "-"
+            },
+            nextMatch: {
+                awayTeam: "Kónyi Ált. Iskolai Csornai SE",
+                date: "2025.05.17. 16:00",
+                location: "Munkanélküliek Sportpálya"
+            },
+            players: [
+                { id: 1, name: "Prém Botond", pos: "Támadó", sport: "foci", img: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=300" },
+                { id: 2, name: "Tóth Ádám", pos: "Támadó", sport: "foci", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=300" },
+                { id: 3, name: "Kluiber Csongor", pos: "Támadó", sport: "foci", img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=300" },
+                { id: 4, name: "Pálffy Ábel", pos: "Kapus", sport: "foci", img: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&q=80&w=300" },
+                { id: 5, name: "Hordos Bulcsu", pos: "Védő", sport: "foci", img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=300" },
+                { id: 6, name: "Prém Botond", pos: "Mezőnyjátékos", sport: "kezi", img: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=300" },
+                { id: 7, name: "Tóth Ádám", pos: "Mezőnyjátékos", sport: "kezi", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=300" },
+                { id: 8, name: "Kluiber Csongor", pos: "Mezőnyjátékos", sport: "kezi", img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=300" }
+            ]
+        };
+
+        // Adatok betöltése localStorage-ból vagy alapértelmezett
+        let appData = JSON.parse(localStorage.getItem('munkanelkuliek_data')) || defaultData;
+
+        function saveData() {
+            localStorage.setItem('munkanelkuliek_data', JSON.stringify(appData));
+        }
+
+        // Tab váltó logika
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            document.querySelectorAll('aside nav button').forEach(btn => {
+                btn.classList.remove('bg-goldPrimary', 'text-black', 'shadow-lg');
+                btn.classList.add('text-gray-300', 'hover:bg-white/5', 'hover:text-white');
+            });
+            const activeBtn = document.getElementById(`nav-${tabId}`);
+            if(activeBtn) {
+                activeBtn.classList.remove('text-gray-300', 'hover:bg-white/5', 'hover:text-white');
+                activeBtn.classList.add('bg-goldPrimary', 'text-black', 'shadow-lg');
+            }
+        }
+
+        // Felület frissítése a memóriából
+        function renderUI() {
+            // Klub info
+            document.getElementById('info-elnok').innerText = appData.club.elnok;
+            document.getElementById('info-alelnok').innerText = appData.club.alelnok;
+            document.getElementById('info-szekhely').innerText = appData.club.szekhely;
+            document.getElementById('info-alapitas').innerText = appData.club.alapitas;
+
+            document.getElementById('foci-elnok').innerText = appData.club.elnok;
+            document.getElementById('foci-alelnok').innerText = appData.club.alelnok;
+            document.getElementById('foci-edzo').innerText = appData.club.fociEdzo;
+
+            document.getElementById('kezi-elnok').innerText = appData.club.elnok;
+            document.getElementById('kezi-alelnok').innerText = appData.club.alelnok;
+            document.getElementById('kezi-edzo').innerText = appData.club.fociEdzo;
+
+            // Következő meccs
+            document.getElementById('next-away-name').innerText = appData.nextMatch.awayTeam;
+            document.getElementById('next-date').innerText = appData.nextMatch.date;
+            document.getElementById('next-location').innerText = appData.nextMatch.location;
+            document.getElementById('match-list-away').innerText = appData.nextMatch.awayTeam;
+            document.getElementById('match-list-date').innerText = appData.nextMatch.date;
+            document.getElementById('match-list-loc').innerText = appData.nextMatch.location;
+
+            // Focicsapat keret renderelés
+            const fociTamadok = document.getElementById('foci-tamadok-container');
+            const fociKapus = document.getElementById('foci-kapus-container');
+            const fociVedo = document.getElementById('foci-vedo-container');
+            fociTamadok.innerHTML = '';
+            fociKapus.innerHTML = '';
+            fociVedo.innerHTML = '';
+
+            const fociPlayers = appData.players.filter(p => p.sport === 'foci');
+            fociPlayers.forEach(p => {
+                const cardHTML = `
+                    <div class="bg-black/40 border border-goldPrimary/40 rounded-lg p-2 text-center relative group">
+                        <button onclick="deletePlayer(${p.id})" class="absolute top-1 right-1 text-red-400 hover:text-red-300 opacity-0 group-hover:opacity-15 transition text-xs"><i class="fa-solid fa-trash"></i></button>
+                        <div class="w-16 h-16 rounded-full border-2 border-goldPrimary overflow-hidden mx-auto mb-1 shadow">
+                            <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover">
+                        </div>
+                        <span class="text-xs font-bold text-white block truncate">${p.name}</span>
+                    </div>
+                `;
+                if(p.pos === 'Támadó') fociTamadok.innerHTML += cardHTML;
+                else if(p.pos === 'Kapus') fociKapus.innerHTML += cardHTML;
+                else fociVedo.innerHTML += cardHTML;
+            });
+
+            // Kézilabda csapat keret renderelés
+            const keziContainer = document.getElementById('kezi-keret-container');
+            keziContainer.innerHTML = '';
+            const keziPlayers = appData.players.filter(p => p.sport === 'kezi');
+            keziPlayers.forEach(p => {
+                keziContainer.innerHTML += `
+                    <div class="bg-black/40 border border-goldPrimary/40 rounded-lg p-2 text-center relative group">
+                        <button onclick="deletePlayer(${p.id})" class="absolute top-1 right-1 text-red-400 hover:text-red-300 opacity-0 group-hover:opacity-100 transition text-xs"><i class="fa-solid fa-trash"></i></button>
+                        <div class="w-16 h-16 rounded-full border-2 border-goldPrimary overflow-hidden mx-auto mb-1 shadow">
+                            <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover">
+                        </div>
+                        <span class="text-xs font-bold text-white block truncate">${p.name}</span>
+                    </div>
+                `;
+            });
+
+            // Összes játékos tab grid
+            const allGrid = document.getElementById('all-players-grid');
+            allGrid.innerHTML = '';
+            appData.players.forEach(p => {
+                allGrid.innerHTML += `
+                    <div class="bg-black/30 border border-goldPrimary/30 rounded-xl p-4 flex items-center space-x-4 relative group">
+                        <div class="w-14 h-14 rounded-full border-2 border-goldPrimary overflow-hidden shrink-0">
+                            <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-bold text-white truncate">${p.name}</h4>
+                            <p class="text-xs text-goldPrimary">${p.sport === 'foci' ? 'Focicsapat' : 'Kézilabda'} • ${p.pos}</p>
+                        </div>
+                        <button onclick="deletePlayer(${p.id})" class="text-red-400 hover:text-red-300 p-2"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+            });
+        }
+
+        // Admin Modal vezérlés
+        function openAdminModal() {
+            document.getElementById('admin-away-team').value = appData.nextMatch.awayTeam;
+            document.getElementById('admin-match-date').value = appData.nextMatch.date;
+            document.getElementById('admin-match-loc').value = appData.nextMatch.location;
+            
+            document.getElementById('admin-club-elnok').value = appData.club.elnok;
+            document.getElementById('admin-club-alelnok').value = appData.club.alelnok;
+            document.getElementById('admin-club-szekhely').value = appData.club.szekhely;
+            document.getElementById('admin-foci-edzo').value = appData.club.fociEdzo;
+
+            document.getElementById('admin-modal').classList.remove('hidden');
+        }
+
+        function closeAdminModal() {
+            document.getElementById('admin-modal').classList.add('hidden');
+        }
+
+        function saveAdminChanges() {
+            appData.nextMatch.awayTeam = document.getElementById('admin-away-team').value;
+            appData.nextMatch.date = document.getElementById('admin-match-date').value;
+            appData.nextMatch.location = document.getElementById('admin-match-loc').value;
+
+            appData.club.elnok = document.getElementById('admin-club-elnok').value;
+            appData.club.alelnok = document.getElementById('admin-club-alelnok').value;
+            appData.club.szekhely = document.getElementById('admin-club-szekhely').value;
+            appData.club.fociEdzo = document.getElementById('admin-foci-edzo').value;
+
+            saveData();
+            renderUI();
+            closeAdminModal();
+            alert('Változtatások sikeresen elmentve!');
+        }
+
+        function addNewPlayer() {
+            const name = document.getElementById('new-player-name').value;
+            const sport = document.getElementById('new-player-sport').value;
+            const pos = document.getElementById('new-player-pos').value;
+            let img = document.getElementById('new-player-img').value;
+
+            if(!name) {
+                alert('Kérlek add meg a játékos nevét!');
+                return;
+            }
+
+            if(!img) {
+                img = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=300';
+            }
+
+            const newId = appData.players.length > 0 ? Math.max(...appData.players.map(p => p.id)) + 1 : 1;
+            appData.players.push({ id: newId, name, sport, pos, img });
+
+            saveData();
+            renderUI();
+
+            document.getElementById('new-player-name').value = '';
+            document.getElementById('new-player-img').value = '';
+            alert('Új játékos sikeresen hozzáadva!');
+        }
+
+        function deletePlayer(id) {
+            if(confirm('Biztosan törölni szeretnéd ezt a játékost?')) {
+                appData.players = appData.players.filter(p => p.id !== id);
+                saveData();
+                renderUI();
+            }
+        }
+
+        function resetData() {
+            if(confirm('Biztosan visszaállítod a gyári alapértelmezett adatokat?')) {
+                localStorage.removeItem('munkanelkuliek_data');
+                appData = JSON.parse(JSON.stringify(defaultData));
+                renderUI();
+                closeAdminModal();
+                alert('Adatok sikeresen visszaállítva!');
+            }
+        }
+
+        // Oldal betöltésekor inicializálás
+        window.onload = function() {
+            renderUI();
+        };
+    </script>
+</body>
+</html>
